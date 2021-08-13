@@ -565,6 +565,7 @@ class MakeLimits( ) :
 
 
         syslist = [
+             ('jet_btagSFUP','jet_btagSFDN'),
              ('JetResUp', 'JetResDown'),
              ('JetEnUp', 'JetEnDown'),
              ('MuonEnUp', 'MuonEnDown'),
@@ -581,6 +582,8 @@ class MakeLimits( ) :
              ("mu_trkSFUP", "mu_trkSFDN"),
              ("mu_isoSFUP", "mu_isoSFDN"),]
 
+
+        bjetsfnames= ( 'jet_btagSFUP',   'jet_btagSFDN'   )
         prefnames  = ( 'prefup',         'prefdown'    )
         punames    = ( 'PUUP5',          'PUDN5'       )
         pdfnames   = ( 'muR1muF2',       'muR1muFp5',
@@ -610,6 +613,9 @@ class MakeLimits( ) :
             newsysdict["CMS_mu_trig"] = tuple(sysdict[s]/100.+1 for s in mutrnames)
         if ch == "el":
             newsysdict["CMS_el_trig"] = tuple(sysdict[s]/100.+1 for s in eltrnames)
+
+        ## btag SF
+        newsysdict["CMS_bjetsf"]  = tuple(sysdict[s]/100.+1 for s in bjetsfnames)
 
         ## PU
         newsysdict["CMS_pile"] = tuple(sysdict[s]/100.+1 for s in punames)

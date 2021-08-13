@@ -22,7 +22,7 @@ def get_base_selection( channel ) :
 
 def get_weight_str( ch = None ) :
 
-    weight_str = 'PUWeight*NLOWeight*prefweight'
+    weight_str = 'PUWeight*NLOWeight*prefweight*jet_btagSF'
     weight_str_mu = weight_str + '*(mu_trigSF*mu_idSF*mu_isoSF*mu_trkSF*ph_idSF*ph_psvSF)'
     weight_str_el = weight_str + '*(el_trigSF*el_idSF*el_recoSF*ph_idSF*ph_psvSF)'
     if ch == "el":

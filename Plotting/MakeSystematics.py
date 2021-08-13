@@ -272,10 +272,10 @@ activesignames = [ s.name for s in samples.get_samples(isSignal = True, isActive
 
 ## FIXME bjet SF to be added
 SFlist = ["el_trig", "el_id", "el_reco",
-          "ph_id",   "ph_psv"] ## SF, SFUP, SFDOWN
+          "ph_id",   "ph_psv", "jet_btag"] ## SF, SFUP, SFDOWN
 if ch=="mu":
     SFlist = [ "mu_trig", "mu_id", "mu_trk", "mu_iso", 
-              "ph_id",   "ph_psv"] 
+              "ph_id",   "ph_psv", "jet_btag"] 
 
 metlist=[
             "JetRes",
