@@ -131,6 +131,7 @@ def makeplots():
     syslists= [  ('JetResUp',        'JetResDown'),
                  ('JetEnUp',         'JetEnDown'),
                  ('MuonEnUp',        'MuonEnDown'),
+                 ('PhotonPtScaleUp', 'PhotonPtScaleDown'),
                  ('ElectronEnUp',    'ElectronEnDown'),
                  ('PhotonEnUp',      'PhotonEnDown'),
                  ('UnclusteredEnUp', 'UnclusteredEnDown'),]
@@ -272,15 +273,18 @@ activesignames = [ s.name for s in samples.get_samples(isSignal = True, isActive
 
 ## FIXME bjet SF to be added
 SFlist = ["el_trig", "el_id", "el_reco",
-          "ph_id",   "ph_psv", "jet_btag"] ## SF, SFUP, SFDOWN
+          "ph_id",   "ph_psv"] ## SF, SFUP, SFDOWN
 if ch=="mu":
     SFlist = [ "mu_trig", "mu_id", "mu_trk", "mu_iso", 
-              "ph_id",   "ph_psv", "jet_btag"] 
+              "ph_id",   "ph_psv"] 
+
+#SFlist.append("jet_btag") #need to be added
 
 metlist=[
             "JetRes",
             "JetEn",
             "MuonEn",
+            "PhotonPtScale",
             "ElectronEn",
             "PhotonEn",
             "UnclusteredEn", #--/Up/Down
@@ -308,6 +312,7 @@ for key, (selfull, weight) in cutsetdict.iteritems():
     selection_list[key] = OrderedDict()
     if options.year == 2018:
         weight = weight.replace("*prefweight","") ## no prefiring weight in 2018
+    weight = weight.replace("*jet_btagSF","") ## need to add jet_btagSF later
     print selfull
     print weight
 
@@ -316,15 +321,26 @@ for key, (selfull, weight) in cutsetdict.iteritems():
     ## met uncertainty
     mettaglist = [mname+shift for mname in metlist for shift in ["Up","Down"]]
     for tag in mettaglist:
+
         w = weight.replace("mt_res", "mt_res_%s" %tag )\
                   .replace("met_pt", "met_%s_pt" %tag )
         sel = selfull.replace("mt_res", "mt_res_%s" % tag )\
-                     .replace("met_pt", "met_%s_pt" % tag )
+                  .replace("met_pt", "met_%s_pt" % tag )
+        var = "mt_res_%s" %tag
         if tag == "MuonEnUp":
             sel = sel.replace("mu_pt_rc", "mu_pt_rc_up")
         if tag == "MuonEnDown":
             sel = sel.replace("mu_pt_rc", "mu_pt_rc_down")
-        var = "mt_res_%s" %tag
+
+        if tag == "PhotonPtScaleDown" or tag == "PhotonPtScaleUp":
+            w = weight
+            sel = selfull
+            var = "mt_res"
+        if tag == "PhotonPtScaleDown":
+            sel = sel.replace("ph_pt", "ph_pt_ScaleDown")
+        if tag == "PhotonPtScaleUp":
+            sel = sel.replace("ph_pt", "ph_pt_ScaleUp")
+
         selection_list[key][tag] = dict( w = w, sel = sel, var = var)
 
     ### muon and electron scale factors
@@ -352,7 +368,6 @@ for key, (selfull, weight) in cutsetdict.iteritems():
         sel=selfull
         w = weight.replace("NLOWeight" , "NLOWeight*PDFWeights[%i]" % i )
         selection_list[key][shift] = dict( w=w, sel=sel )
-
 
 hkeys = ["norm",]+mettaglist+sftaglist+pupreftaglist+eventweightlist
 ## systematics as function of mass
