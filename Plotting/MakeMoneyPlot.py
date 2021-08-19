@@ -27,6 +27,7 @@ def main() :
                  ]
 
     for ch, samples in zip(["mu","el"],[sampManMuG,sampManElG]):
+    #for ch, samples in zip(["el","mu"],[sampManElG,sampManMuG]):
         labelname = "%i Muon Channel" %options.year if ch == "mu" else "%i Electron Channel" %options.year
         lepname = "e" if ch == "el" else "#mu"
         #labelname+=" scaled to 2016 luminosity"
@@ -34,6 +35,10 @@ def main() :
         ##if ch == "mu": selection = basemu + ph_eb + metgt40  + passpix + phpt80 + "&& mu_passTight[0] && ph_passTight[0]"
         #selection , weight = defs.makeselstring(ch, 210, 35, 160)
         selection , weight = defs.makeselstring(ch,  80, 35,  40)
+        #Yihui
+        weight = weight.replace("*jet_btagSF","") ## No btag
+        if options.year == 2018:
+            weight = weight.replace("prefweight","1")
 
 
         ## prepare config

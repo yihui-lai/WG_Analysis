@@ -34,7 +34,7 @@ def main() :
     sampManElG = SampleManager( options.baseDirElG, _TREENAME, filename=_FILENAME, lumi=-1)
     sampManMuG.ReadSamples( _SAMPCONF )
     sampManElG.ReadSamples( _SAMPCONF )
-    
+     
     workspaces_to_save = {}
 
     bin_width_m = 20
@@ -125,7 +125,6 @@ def main() :
             ## call fit function
             make_signal_fits( man, workspaces_to_save=workspaces_to_save,
                                suffix='%s%i'%(ch,options.year), **vardata)
-
     multidict_tojson2(_JSONLOC, fitted_masses )
 
     for fileid, ws in workspaces_to_save.iteritems() :
@@ -162,6 +161,7 @@ def numtostr(num=0):
 def makevar(var, mass):
     xvar = ROOT.RooRealVar( var, var, _XMIN_M , _XMAX_M)
     fit_max = mass * 1.20
+    ## Yihui change mini
     fit_min = max ( mass * 0.50,  200.0 )
     ## set the fit range
     xvar.setMin( fit_min )
@@ -402,7 +402,7 @@ metlist=[
             "ElectronEn",
             "PhotonEn",
             "UnclusteredEn", #--/Up/Down
-            "PhotonPtScale",
+#            "PhotonPtScale",
         ]
 
 eventweightlist = ["muR1muF2",
@@ -478,10 +478,10 @@ def make_syssellist( varnorm, selnorm, weightnorm, ch = "el"):
         if tag == "MuonEnDown":
             sel = sel.replace("mu_pt_rc", "mu_pt_rc_down")
         
-        if tag == "PhotonPtScaleUp":
-            sel = sel.replace("ph_pt", "ph_pt_Scale_up")
-        if tag == "PhotonPtScaleDown":
-            sel = sel.replace("ph_pt", "ph_pt_Scale_down")
+#        if tag == "PhotonPtScaleUp":
+#            sel = sel.replace("ph_pt", "ph_pt_Scale_up")
+#        if tag == "PhotonPtScaleDown":
+#            sel = sel.replace("ph_pt", "ph_pt_Scale_down")
 
         var = "mt_res_%s" %tag
         selection_list[tag] = (var, sel, w)

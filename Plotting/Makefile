@@ -1,5 +1,5 @@
 ### ATTENTION: Set OUTPUTMAIN to the folder in your Plotting directory where you want to save your output
-OUTPUTMAIN=/home/kakw/efake/WG_Analysis/Plotting/data
+OUTPUTMAIN=/data/users/yihuilai/updateWG/WG_Analysis/Plotting/data
 ### ATTENTION: Make sure that these DIR_* strings specify the directories containing the processed ntuples that you want to run over
 DIR_MUG=/data/users/friccita/WGammaNtuple/LepGamma_mug_2019_04_11/WithSF
 DIR_ELG=/data/users/friccita/WGammaNtuple/LepGamma_elg_2019_04_11/WithSF
@@ -50,8 +50,23 @@ matrix:
 
 fit:
 
-	python MakeFits.py --condor
-	make limit
+	python MakeFits.py --condor 
+	#make limit
+nofit:
+
+	python MakeFits.py --noRunCombine
+
+limit1:
+
+	./limitplot_compare.py data_0p2_A/higgs/Results/result_0p01_all.json
+	./limitplot_compare.py data_0p2_A/higgs/Results/result_5_all.json
+
+limit2:
+
+	./limitplot_compareratio.py data_0p2_A/higgs/Results/result_0p01_all.json data_0p5pm30/higgs/Results/result_0p01_all.json data_0p5pm40/higgs/Results/result_0p01_all.json 0p2 0p5pm30 0p5pm40 
+	#./limitplot_compareratio.py data_0p2_A/higgs/Results/result_0p01_all.json data_0p4m20_0p6p20/higgs/Results/result_0p01_all.json data_0p5pm40/higgs/Results/result_0p01_all.json data_0p4m20_0p5p40/higgs/Results/result_0p01_all.json
+	#./limitplot_compareratio.py data_0p2_A/higgs/Results/result_5_all.json data_0p5pm30/higgs/Results/result_5_all.json data_0p5pm40/higgs/Results/result_5_all.json
+	#./limitplot_compareratio.py data_0p2_A/higgs/Results/result_5_all.json data_0p4m20_0p6p20/higgs/Results/result_5_all.json data_0p5pm40/higgs/Results/result_5_all.json data_0p4m20_0p5p40/higgs/Results/result_5_all.json
 
 limit:
 
@@ -71,17 +86,25 @@ limit:
 	./limitplot.py data/higgs/Results/result_5_mu2016.json
 	./limitplot.py data/higgs/Results/result_5_mu2017.json
 	./limitplot.py data/higgs/Results/result_5_mu2018.json
-	mv result_*.pdf ~/public_html/
-	mv result_*.png ~/public_html/
+	#mv result_*.pdf ~/public_html/
+	#mv result_*.png ~/public_html/
 
 sys:
 
-	python MakeSystematics.py --batch --year 2016 --ch mu --condor
-	python MakeSystematics.py --batch --year 2017 --ch mu --condor
-	python MakeSystematics.py --batch --year 2018 --ch mu --condor
-	python MakeSystematics.py --batch --year 2016 --ch el --condor
-	python MakeSystematics.py --batch --year 2017 --ch el --condor
-	python MakeSystematics.py --batch --year 2018 --ch el --condor
+	#python MakeSystematics.py --batch --year 2016 --ch mu --condor
+	#python MakeSystematics2.py --batch --year 2017 --ch mu --condor 
+	#python MakeSystematics.py --batch --year 2018 --ch mu --condor
+	#python MakeSystematics.py --batch --year 2016 --ch el --condor
+	python MakeSystematics.py --batch --year 2017 --ch el 
+	#python MakeSystematics.py --batch --year 2018 --ch el --condor
+BKGR:
+
+	python MakeBKGRatioPlot.py  --batch --year 2016 --ch el 
+	#python MakeBKGRatioPlot.py  --batch --year 2017 --ch el #--condor
+	#python MakeBKGRatioPlot.py  --batch --year 2018 --ch el #--condor
+	#python MakeBKGRatioPlot.py  --batch --year 2016 --ch mu #--condor
+	#python MakeBKGRatioPlot.py  --batch --year 2017 --ch mu #--condor
+	#python MakeBKGRatioPlot.py  --batch --year 2018 --ch mu 
 
 llvalid : 
 
@@ -94,30 +117,30 @@ llvalid :
 
 lgvalid : 
 
-	python MakeElGValidPlot.py --batch --year 2016 --condor
-	python MakeElGValidPlot.py --batch --year 2017 --condor
-	python MakeElGValidPlot.py --batch --year 2018 --condor
-	python MakeMuGValidPlot.py --batch --year 2016 --condor
-	python MakeMuGValidPlot.py --batch --year 2017 --condor
-	python MakeMuGValidPlot.py --batch --year 2018 --condor
+	python MakeElGValidPlot.py --batch --year 2016 #--condor
+	#python MakeElGValidPlot.py --batch --year 2017 --condor
+	#python MakeElGValidPlot.py --batch --year 2018 --condor
+	#python MakeMuGValidPlot.py --batch --year 2016 --condor
+	#python MakeMuGValidPlot.py --batch --year 2017 --condor
+	#python MakeMuGValidPlot.py --batch --year 2018 --condor
 
 money : 
 
 	python MakeMoneyPlot.py --batch --year 2016
-	python MakeMoneyPlot.py --batch --year 2017
-	python MakeMoneyPlot.py --batch --year 2018
+	#python MakeMoneyPlot.py --batch --year 2017
+	#python MakeMoneyPlot.py --batch --year 2018
 
 signal : 
 
-	python MakeSignalWS.py --batch --condor --year 2016
-	python MakeSignalWS.py --batch --condor --year 2017
-	python MakeSignalWS.py --batch --condor --year 2018
+	python MakeSignalWS.py --batch  --year 2016 --condor
+	python MakeSignalWS.py --batch  --year 2017 --condor
+	python MakeSignalWS.py --batch  --year 2018 --condor
 
 bkg : 
 
-	python MakeMCBkgWS.py --process All --batch --year 2016
-	python MakeMCBkgWS.py --process All --batch --year 2017
-	python MakeMCBkgWS.py --process All --batch --year 2018
+	python MakeMCBkgWS.py --process All --batch --year 2016 --condor
+	python MakeMCBkgWS.py --process All --batch --year 2017 --condor
+	python MakeMCBkgWS.py --process All --batch --year 2018 --condor
 
 efake : 
 

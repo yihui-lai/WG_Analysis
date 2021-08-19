@@ -37,6 +37,7 @@ recdd = lambda : defaultdict(recdd) ## define recursive defaultdict
 _FILENAME = 'tree.root'
 _TREENAME = 'UMDNTuple/EventTree'
 datestr   = "2020_08_25"
+#datestr   = "2021_08_12"
 
 lumiratio = 1.
 datestrmm=datestree=datestreg=datestrmg=""
@@ -62,7 +63,6 @@ elif options.year == 2018:
     #lumiratio = 1./(1-1./18)
     #datestr   = "2020_02_11"
     #datestrmm = datestree   = "2020_04_25" # beta for mumu elel
-
 
 filename = __file__.rstrip(".py").split("/")[-1]
 if options.batch:

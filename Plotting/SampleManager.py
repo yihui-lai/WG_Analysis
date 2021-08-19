@@ -325,7 +325,6 @@ class Sample :
                     rf.Close()
                 self.chain.Add(f)
 
-
         if self.weightHist:
             ## using python slicing syntax on TH1
             totevt = self.weightHist[2] - self.weightHist[1]
@@ -334,6 +333,10 @@ class Sample :
                 print "total event from histogram: %.8g total event in"\
                       "imported XS file: %.8g ratio: %g"  \
                        %(totevt, self.total_events, totevt/self.total_events)
+                ## Yihui -- should exit if not correct number 
+                if('ChargedResonance' in str(files[0]) and totevt!= 50000):
+                    print('-----------',files[0])
+                    #exit()
 
         if readHists:
             for f in files :

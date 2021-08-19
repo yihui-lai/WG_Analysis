@@ -239,7 +239,13 @@ def makeselstringlist(ch="el", phpt = 80, leppt = 35, met = 40):
     mu_pt  = 'mu_pt_rc[0] > %i ' %leppt
 
     ph_base = 'ph_IsEB[0]'
-    ph_pt  = 'ph_pt[0] > %i ' %phpt
+    #ph_pt  = 'ph_pt[0] > %i ' %phpt
+    # Yihui progressively photon pt
+    ph_pt  = 'ph_pt[0] > 0.40*m_mt_lep_met_ph - 20 && ph_pt[0] < 0.50*m_mt_lep_met_ph + 40'
+    #ph_pt  = 'ph_pt[0] > 0.40*m_mt_lep_met_ph - 20 && ph_pt[0] < 0.60*m_mt_lep_met_ph + 20'
+    #ph_pt  = 'ph_pt[0] > 0.50*m_mt_lep_met_ph - 40 && ph_pt[0] < 0.50*m_mt_lep_met_ph + 40'
+    #ph_pt  = 'ph_pt[0] > 0.50*m_mt_lep_met_ph - 30 && ph_pt[0] < 0.50*m_mt_lep_met_ph + 30'
+
     ph_passpix = '!ph_hasPixSeed[0]'
     ph_tight = 'ph_passTight[0]' # already in base selection
     sel_ph =  [ph_base, ph_tight, ph_pt, ph_passpix]
@@ -282,7 +288,7 @@ def kinedictgen( ch, addition = "" ):
 #               "B": dict( phpt = 60, leppt = 35, met = 100, addition = addition),
 #               "C": dict( phpt = 60, leppt = 35, met = 40, addition = addition),
 #               "B": dict(phpt = 130, leppt = leppt, met = 40, addition = addition),
-               "B": dict( phpt = 200, leppt = leppt, met = 40, addition = addition),
+#               "B": dict( phpt = 200, leppt = leppt, met = 40, addition = addition),
             }
     return cutsetdict
 
@@ -312,7 +318,9 @@ def selectcutstring( mass, ch, addition = "" ):
     #    return returner("B")
     #else:
     #    return returner("C")
-    if mass < 625:
-        return returner("A")
-    else:
-        return returner("B")
+    #always use A since pt dependent
+    return returner("A")
+    #if mass < 625:
+    #    return returner("A")
+    #else:
+    #    return returner("B")

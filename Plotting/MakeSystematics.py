@@ -131,6 +131,7 @@ def makeplots():
     syslists= [  ('JetResUp',        'JetResDown'),
                  ('JetEnUp',         'JetEnDown'),
                  ('MuonEnUp',        'MuonEnDown'),
+                 ('ElectronPtScaleUp', 'ElectronPtScaleDown'),
                  ('PhotonPtScaleUp', 'PhotonPtScaleDown'),
                  ('ElectronEnUp',    'ElectronEnDown'),
                  ('PhotonEnUp',      'PhotonEnDown'),
@@ -139,7 +140,9 @@ def makeplots():
     scs = lambda m: defs.selectcutstring(m, ch)[0]
     fig = plt.figure(figsize=(12,12))
     for i,syslist in enumerate(syslists):
-        print syslist, [[systematic_dict[c][sys]['MadGraphResonanceMass%i_width%s' %(1000,w)] for c in "ABC"]  \
+        #unnecessary BC
+        #print syslist, [[systematic_dict[c][sys]['MadGraphResonanceMass%i_width%s' %(1000,w)] for c in "ABC"]  \
+        print syslist, [[systematic_dict[c][sys]['MadGraphResonanceMass%i_width%s' %(1000,w)] for c in "A"]  \
           for sys in syslist for w in ("0p01","5")]
         sysvalues=[[systematic_dict[scs(m)][sys]['MadGraphResonanceMass%i_width%s' %(m,w)] for m in xpoints] \
           for sys in syslist for w in ("0p01","5")]
@@ -278,12 +281,13 @@ if ch=="mu":
     SFlist = [ "mu_trig", "mu_id", "mu_trk", "mu_iso", 
               "ph_id",   "ph_psv"] 
 
-#SFlist.append("jet_btag") #need to be added
+SFlist.append("jet_btag") #need to be added
 
 metlist=[
             "JetRes",
             "JetEn",
             "MuonEn",
+            "ElectronPtScale",
             "PhotonPtScale",
             "ElectronEn",
             "PhotonEn",
@@ -309,12 +313,14 @@ selection_list = OrderedDict()
 
 
 for key, (selfull, weight) in cutsetdict.iteritems():
+    print("key ",key)
     selection_list[key] = OrderedDict()
     if options.year == 2018:
         weight = weight.replace("*prefweight","") ## no prefiring weight in 2018
-    weight = weight.replace("*jet_btagSF","") ## need to add jet_btagSF later
-    print selfull
-    print weight
+    #if ( ch=="mu" ):
+    #    weight = weight.replace("*jet_btagSF","")
+    print("selfull ",selfull)
+    print("weight",weight)
 
     selection_list[key]["norm"] = dict( w=weight, sel=selfull)
 
@@ -340,6 +346,14 @@ for key, (selfull, weight) in cutsetdict.iteritems():
             sel = sel.replace("ph_pt", "ph_pt_ScaleDown")
         if tag == "PhotonPtScaleUp":
             sel = sel.replace("ph_pt", "ph_pt_ScaleUp")
+        if tag == "ElectronPtScaleDown" or tag == "ElectronPtScaleUp":
+            w = weight
+            sel = selfull
+            var = "mt_res"
+        if tag == "ElectronPtScaleDown":
+            sel = sel.replace("el_pt", "el_pt_ScaleDown")
+        if tag == "ElectronPtScaleUp":
+            sel = sel.replace("el_pt", "el_pt_ScaleUp")
 
         selection_list[key][tag] = dict( w = w, sel = sel, var = var)
 
