@@ -47,7 +47,7 @@ def plt_signal_ws( ):
     #sampManElG.ReadSamples( _SAMPCONF )
     #totevt = sampManMuG.weightHist[2] - sampManMuG.weightHist[1]
     #print(totevt)
-    exit()
+    #exit()
     #for mass in signal_masses :
     #    scale = weightMap['ResonanceMass%d'%mass]['scale']
     #    xsec = weightMap['ResonanceMass%d'%mass]['cross_section']\

@@ -215,7 +215,7 @@ def make_signal_fits( sampMan, suffix="", workspaces_to_save=None, var="mt_res",
         #weight = "NLOWeight"
         if options.year == 2018:
             weight = weight.replace("*prefweight","") ## no prefiring weight in 2018
-        weight = weight.replace("*jet_btagSF","") ## no jet_btagSF
+        weight = weight.replace("*jet_btagSF","") ## Yihui -- no jet_btagSF
 
         ## make RooRealVar for fit variable
 

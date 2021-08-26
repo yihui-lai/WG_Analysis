@@ -31,10 +31,17 @@ x = ROOT.Double(0.)
 y = ROOT.Double(0.)
 for i in range((len(sys.argv)+1)/2):
     if i ==0: continue
+    fgraphs[i].values()[2].GetPoint(0, x, y)
+    print(x,y)
+print("\n")
+for i in range((len(sys.argv)+1)/2):
+    if i ==0: continue
     fgraphs[i].values()[2].GetPoint(1, x, y)
     print(x,y)
-    fgraphs[i].values()[2].GetPoint(8, x, y)
-    print(x,y)
+for i in range((len(sys.argv)+1)/2):
+    if i ==0: continue
+    #fgraphs[i].values()[2].GetPoint(10, x, y)
+    #print(x,y)
 
 # Get limit TGraphs as a dictionary
 
@@ -109,7 +116,7 @@ for i in range((len(sys.argv)+1)/2):
     fgraph[i].SetLineWidth( 2 )
     fgraph[i].SetLineStyle( 9 )
     fgraph[i].Draw()
-leg1 = ROOT.TLegend(0.35,0.57,0.56,0.7);
+leg1 = ROOT.TLegend(0.45,0.5,0.66,0.7);
 leg1.SetFillColor(ROOT.kWhite);
 leg1.SetLineColor(ROOT.kWhite);
 for i in range((len(sys.argv)+1)/2):

@@ -3,7 +3,7 @@ import subprocess
 from argparse import Namespace
 from check_dataset_completion import check_dataset_completion
 
-hostname = os.getenv('HOSTNAME')
+hostname = os.getenv('HOST')
 
 _AT_UMD = ( hostname.count('umd') > 0 )
 
@@ -164,7 +164,7 @@ def RunJobs( jobs, configs, options, dry_run=False ) :
 
                 if PUPath is not None :
 
-                    module_str += '\'sampleFile\' : \'%s/%s/hist.root\', ' %( PUPath, job.sample )
+                    module_str += '\'sampleFile\' : \'%s/%s_hist.root\', ' %( PUPath, job.sample )
 
                 module_str += '}'
 

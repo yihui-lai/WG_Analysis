@@ -50,11 +50,11 @@ matrix:
 
 fit:
 
-	python MakeFits.py --condor 
+	python MakeFits.py --condor #--useToySignal
 	#make limit
 nofit:
 
-	python MakeFits.py --noRunCombine
+	python MakeFits.py --noRunCombine #--useToySignal
 
 limit1:
 
@@ -63,10 +63,10 @@ limit1:
 
 limit2:
 
-	./limitplot_compareratio.py data_0p2_A/higgs/Results/result_0p01_all.json data_0p5pm30/higgs/Results/result_0p01_all.json data_0p5pm40/higgs/Results/result_0p01_all.json 0p2 0p5pm30 0p5pm40 
-	#./limitplot_compareratio.py data_0p2_A/higgs/Results/result_0p01_all.json data_0p4m20_0p6p20/higgs/Results/result_0p01_all.json data_0p5pm40/higgs/Results/result_0p01_all.json data_0p4m20_0p5p40/higgs/Results/result_0p01_all.json
-	#./limitplot_compareratio.py data_0p2_A/higgs/Results/result_5_all.json data_0p5pm30/higgs/Results/result_5_all.json data_0p5pm40/higgs/Results/result_5_all.json
-	#./limitplot_compareratio.py data_0p2_A/higgs/Results/result_5_all.json data_0p4m20_0p6p20/higgs/Results/result_5_all.json data_0p5pm40/higgs/Results/result_5_all.json data_0p4m20_0p5p40/higgs/Results/result_5_all.json
+	./limitplot_compareratio.py data/higgs_toy_bin200_all/Results/result_0p01_all.json  data/higgs_toy_bin100_all/Results/result_0p01_all.json
+	./limitplot_compareratio.py data/higgs_toy_bin200_all/Results/result_5_all.json  data/higgs_toy_bin100_all/Results/result_5_all.json
+	#./limitplot_compareratio.py data_0p2_A/higgs/Results/result_0p01_all.json data_0p4m20_0p5p40/higgs/Results/result_0p01_all.json data_0p45m20_0p55/higgs/Results/result_0p01_all.json data_noph_ptcut/higgs/Results/result_0p01_all.json data_nomet/higgs/Results/result_0p01_all.json data_phpt_80/higgs/Results/result_0p01_all.json 0.2pt 0.4mass-20/0.5mass+40 0.45mass-20/0.55pt no_phptcut 0.2pt_no_metcut phpt80
+	#./limitplot_compareratio.py data_0p2_A/higgs/Results/result_5_all.json data_0p4m20_0p5p40/higgs/Results/result_5_all.json data_0p45m20_0p55/higgs/Results/result_5_all.json data_noph_ptcut/higgs/Results/result_5_all.json data_nomet/higgs/Results/result_5_all.json data_phpt_80/higgs/Results/result_5_all.json 0.2pt 0.4mass-20/0.5mass+40 0.45mass-20/0.55pt no_phptcut 0.2pt_no_metcut phpt_80
 
 limit:
 

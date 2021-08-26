@@ -170,8 +170,8 @@ def main() :
                            #rmax = 20,
                            #seed = 123456,
                            doImpact=False,
-                           floatBkg =False, ## background parameters will be contrained if False
-                           numberOfToys = 0, ## -1 for Asimov, 0 for "data" (or homemade toy)
+                           floatBkg =False,#True, ## background parameters will be contrained if False
+                           numberOfToys = 1, ## -1 for Asimov, 0 for "data" (or homemade toy)
                            #freezeParameter = "all", ## "all", "bkg" or "sig", or "s+b", or "constrained"
                            #fitrange = fitrangefx # a function that takes mass and return fit range
                          )
@@ -441,8 +441,9 @@ class MakeLimits( ) :
             # -------------------------------------------------
             # if testing using a gauss signal, make that workspace
             # -------------------------------------------------
-            self.make_gauss_signal(  50 )
-
+            for ibin in self.bins:
+                print(ibin)
+                self.make_gauss_signal(  50, ibin )
         else:
             # -------------------------------------------------
             # Copy the signal funcitons and set variables to constant as needed
@@ -720,7 +721,7 @@ class MakeLimits( ) :
 
                     card_path = '%s/wgamma_test_%s_%s_%s.txt' %(suboutputdir, self.var, sigpar, binid(obin) )
 
-                    self.generate_card( card_path, sigpar, cuttag = cuttag , obin = obin)
+                    self.generate_card( card_path, sigpar, cuttag = cuttag , obin = obin, imass=int(mass))
 
                     self.allcards[sigpar+"_"+binid(obin)] =  card_path
 
@@ -730,7 +731,7 @@ class MakeLimits( ) :
 
                 card_path = '%s/wgamma_test_%s_%s.txt' %(outputdir, self.var, sigpar )
 
-                self.generate_card( card_path, sigpar, cuttag = cuttag )
+                self.generate_card( card_path, sigpar, cuttag = cuttag , imass=int(mass))
 
                 self.allcards[sigpar + '_all'] =  card_path
 
@@ -741,7 +742,7 @@ class MakeLimits( ) :
 
 
     @f_Dumpfname
-    def generate_card( self, outputCard, sigpar,  tag='base' , cuttag = "", obin = None) :
+    def generate_card( self, outputCard, sigpar,  tag='base' , cuttag = "", obin = None, imass = 300) :
         """
 
             generates card
@@ -930,6 +931,7 @@ class MakeLimits( ) :
                 for bkgname, bkg in self.backgrounds.iteritems():
                     bkgsysstr = sysstr(bkg.sys[bin_id][cuttag].get(sn))
                     sys_line.append(bkgsysstr)
+            #Yihui ---- don't need syst now 
             card_entries.append( listformat(sys_line, "%-15s"))
 
 
@@ -971,19 +973,34 @@ class MakeLimits( ) :
                 else:
                     #fix one parameter -- Yihui
                     if "order2" in iparname:
-                        print("------------",ibin['channel'],cuttag,str(ibin["year"]),iparname)
-                        card_entries.append('%s flatParam'%iparname)
+                        #print("------------",ibin['channel'],cuttag,str(ibin["year"]),iparname)
+                        card_entries.append('%s flatParam'%iparname )
+                        #card_entries.append('%s flatParam %.2f'%(iparname, iparval[0]) )
+                        #card_entries.append('%s param %.2f %.2f'%(iparname, iparval[0], iparval[1]*5))
                     else:
-                        card_entries.append('%s param %.2f %.2f'%(iparname, iparval[0], iparval[1]))
-
+                        card_entries.append('%s flatParam'%iparname)
+                        #card_entries.append('%s flatParam %.2f'%(iparname, iparval[0]) )
+                        #card_entries.append('%s param %.2f %.2f'%(iparname, iparval[0], iparval[1]))
+        
         for ibin, sig in viablesig:
             #sig = self.signals.get(sigpar+"_"+ibin['channel']+str(ibin['year']))
             #if not sig: ## model not exist
             #    continue
+            #print('get channel year', ibin)
             for iparname, iparval in sig['params'].iteritems():
                 if iparval[1] != 0:
+                   print("skip")
+                   #Yihui --- use smooth signal model
+                   #print(imass, 24.7695+imass*0.0197778+1.21337e-05*imass**2-3.19634e-09*imass**3, 26.5736-0.0111605*imass+8.90339e-06*imass**2-1.42801e-09*imass**3)
+                   #if 'cb_mass_MG' in iparname:
+                   #    card_entries.append('%s param %.5f %.5f'%(iparname, -17.1296+imass, (-17.1296+imass)*0.01))
+                   #elif 'cb_cut1_MG' in iparname:
+                   #    card_entries.append('%s param %.5f %.5f'%(iparname, 1.4756823440075475-0.0023051161425137827*imass+1.60096e-06*imass**2-3.71669e-10*imass**3, (1.4756823440075475-0.0023051161425137827*imass+1.60096e-06*imass**2-3.71669e-10*imass**3)*0.01))
+                   #elif 'cb_sigma_MG' in iparname:
+                   #    card_entries.append('%s param %.5f %.5f'%(iparname, 24.7695+imass*0.0197778+1.21337e-05*imass**2-3.19634e-09*imass**3, (24.7695+imass*0.0197778+1.21337e-05*imass**2-3.19634e-09*imass**3)*0.01))
+                   #else:
+                   #    card_entries.append('%s param %.5f %.5f'%(iparname, iparval[0], iparval[1]))
                    card_entries.append('%s param %.5f %.5f'%(iparname, iparval[0], iparval[1]))
-
         card_entries.append( section_divider )
 
         #for ibin in bins :
@@ -1071,8 +1088,13 @@ class MakeLimits( ) :
 
            if xvar is None :
                xvar = ws.var( self.xvarname )
-           xvar.setRange( defs.bkgfitlowbin(cutset) ,2000)
-           xvar.setBins(50)
+           #Yihui -- always 200 to 2000
+           xvar.setRange( 200 ,2000)
+           #xvar.setRange( defs.bkgfitlowbin(cutset) ,2000)
+           #Yihui -- change toy number of bins
+           #xvar.setBins(50)
+           #xvar.setBins(250)
+           xvar.setBins(200)
            print xvar.Print()
 
            ofile.Close()
@@ -1243,6 +1265,7 @@ class MakeLimits( ) :
                         varrange = (-100,100)
 
                     var =  ROOT.RooRealVar( ipar, ipar, oldvar.getVal(),
+                                            #oldvar.getVal(), oldvar.getVal()+0.1 )
                                             varrange[0], varrange[1] )
                     print var
                     # save the value and errors of the fit parameters, to be used for card generation
@@ -1357,7 +1380,8 @@ class MakeLimits( ) :
             import_workspace( ws_out, var)
 
         var = ws_in.var(self.var)
-        #var.setRange(200,2000)
+        #Yihui --set the range to be 200, 2000
+        var.setRange(200,2000)
         var.setBins(50)
         import_workspace( ws_out, var)
 
@@ -1415,14 +1439,15 @@ class MakeLimits( ) :
         #rate = func.Eval(int(mass)) * scale
         #norm_var.setError( norm_var.getError() * scale * func.Eval(int(mass)) / norm_var.getValV() )
         #norm_var.setVal( func.Eval(int(mass)) * scale )
-        rate = norm_var.getVal() * scale
-        norm_var.setVal( norm_var.getValV() * scale )
-        norm_var.setError( norm_var.getError() * scale )
+        #Yihui -- use corrected weights 
+        rate = norm_var.getVal() * scale * 10
+        norm_var.setVal( norm_var.getValV() * scale *10 )
+        norm_var.setError( norm_var.getError() * scale *10 )
         if("%s_%s_%s"%(str(mass),width,ibin['year']) in N_tot):
             rate = rate* 50000.0/N_tot["%s_%s_%s"%(str(mass),width,ibin['year'])]
             norm_var.setVal( norm_var.getValV() * 50000.0/N_tot["%s_%s_%s"%(str(mass),width,ibin['year'])])
             norm_var.setError( norm_var.getError() * 50000.0/N_tot["%s_%s_%s"%(str(mass),width,ibin['year'])])
-            print(" -------------------- correct norm! ",  50000.0/N_tot["%s_%s_%s"%(str(mass),width,ibin['year'])]) 
+        #    print(" -------------------- correct norm! ",  50000.0/N_tot["%s_%s_%s"%(str(mass),width,ibin['year'])]) 
         print tPurple%("norm %g scale %g rate %g" \
                                    %(norm_var.getVal(),scale,rate))
 
@@ -1497,13 +1522,16 @@ class MakeLimits( ) :
 
 
                 suffix = "_".join([sigpar, self.bins[0]['channel'], self.var,
-                    self.wstag, self.bins[0]['eta']])
+                    self.wstag])
 
                 if DEBUG:
                    print suffix
-
-                xvar = ROOT.RooRealVar( self.xvarname, self.xvarname,
-                        var['range'][0], var['range'][1] )
+                #Yihui -- gauss signal
+                print(self.var)
+                print(self.bins)
+                print(self.fitrange)
+                xvar = ROOT.RooRealVar( self.xvarname, self.xvarname,200,2000)
+#                        self.var['range'][0], self.var['range'][1] )
 
                 mean = ROOT.RooRealVar( 'mean_%s' %suffix, 'mean', mass )
                 sigma = ROOT.RooRealVar( 'sigma_%s' %suffix, 'sigma',
@@ -1588,6 +1616,26 @@ class MakeLimits( ) :
 
     def get_combine_command( self, sigpar, card, log_file):
 
+        #Yihui --- Test adding initial value in command line
+        #setpa = ' --setParameters '
+        #for iparname, iparval in self.params.iteritems():
+        #    setpa += "%s=%s,"%(iparname,iparval[0])
+        #setpa=setpa[:-1]
+        #setpa += " "
+        #setpa = " --trackParameters "
+        #for iparname, iparval in self.params.iteritems():
+        #    setpa += "%s,"%(iparname)
+        #setpa=setpa[:-1]
+        #setpa += " "
+        #setpa += " --freezeParameters "
+        #for iparname, iparval in self.params.iteritems():
+        #    setpa += "%s,"%(iparname)
+        #setpa=setpa[:-1]
+        #setpa += " "
+        setpa = " "
+
+
+
         ### essential info
         wid = sigpar.split('_W')[1].split('_')[0]
         mass = int(sigpar.split('_')[0].lstrip("M"))
@@ -1612,6 +1660,7 @@ class MakeLimits( ) :
                 command += "plotImpacts.py -i impacts.json -o impacts_%s\n\n" %(sigpar)
 
             flagstr = ""
+            #no dash t
             #if self.numberOfToys is not None: flagstr+=" -t %d"  %self.numberOfToys
             if self.rmin is not None: flagstr+= " --rMin %.2g" %self.rmin
             if self.rmax is not None: flagstr+= " --rMax %.2g" %self.rmax
@@ -1634,8 +1683,8 @@ class MakeLimits( ) :
 
             flagstr+= mtrange
 
-            command+= 'combine -M AsymptoticLimits -m %d %s %s >& %s'\
-                        %( mass, flagstr, card, log_file )
+            command+= 'combine -M AsymptoticLimits -m %d %s %s %s >& %s'\
+                        %( mass, flagstr, card, setpa, log_file )
 
 
         if self.method == 'AsymptoticLimitsManual' :

@@ -11,7 +11,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "BranchDefs.h"
 #include "BranchInit.h"
 #include "include/RoccoR.h"
 
@@ -836,10 +835,12 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
             std::string data_filename;
             std::string sample_histname;
             std::string data_histname;
+            std::string pdf_histname;
             std::map<std::string, std::string>::const_iterator sfitr = mod_conf.GetInitData().find( "sample_file" );
             std::map<std::string, std::string>::const_iterator dfitr = mod_conf.GetInitData().find( "data_file" );
             std::map<std::string, std::string>::const_iterator shitr = mod_conf.GetInitData().find( "sample_hist" );
             std::map<std::string, std::string>::const_iterator dhitr = mod_conf.GetInitData().find( "data_hist" );
+            std::map<std::string, std::string>::const_iterator phitr = mod_conf.GetInitData().find( "pdf_hist" );
 
             bool get_weight_hists = true;
 
@@ -867,19 +868,30 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
             else {
                 get_weight_hists = false;
             }
+            if( phitr != mod_conf.GetInitData().end() ) {
+                pdf_histname = phitr->second;
+            }
+            else {
+                get_weight_hists = false;
+            }
 
             if( get_weight_hists ) {
 
                 _puweight_sample_file = TFile::Open( sample_filename.c_str(), "READ" );
                 _puweight_data_file = TFile::Open( data_filename.c_str(), "READ" );
 
-                _puweight_sample_hist = dynamic_cast<TH1F*>(_puweight_sample_file->Get( sample_histname.c_str() ) ) ;
+                _puweight_sample_hist = dynamic_cast<TH1D*>(_puweight_sample_file->Get( sample_histname.c_str() ) ) ;
                 _puweight_data_hist = dynamic_cast<TH1D*>(_puweight_data_file->Get( data_histname.c_str() ) );
+
+                _pdfweight_sample_hist = dynamic_cast<TH1D*>(_puweight_sample_file->Get( pdf_histname.c_str() ) ) ;
                 if( !_puweight_sample_hist ) {
                     std::cout << "Could not retrieve histogram " << sample_histname << " from " << sample_filename  << std::endl;
                 }
                 if( !_puweight_data_hist ) {
                     std::cout << "Could not retrieve histogram " << data_histname << " from " << data_filename << std::endl;
+                }
+                if( !_pdfweight_sample_hist ) {
+                    std::cout << "Could not retrieve histogram " << pdf_histname << " from " << sample_filename  << std::endl;
                 }
             }
             else {
@@ -964,7 +976,7 @@ bool RunModule::execute( std::vector<ModuleConfig> & configs ) {
     // loop over configured modules
     bool save_event = true;
     printevent = false;
-    if( IN::eventNumber%1000000 == 42 ) printevent = true;
+    if( IN::eventNumber%10000 == 42 ) printevent = true;
     if( printevent ) std::cout << " eventNumber " << IN::eventNumber << std::endl;
     BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
         save_event &= ApplyModule( mod_conf );
@@ -2888,6 +2900,44 @@ void RunModule::BuildEventVars( ModuleConfig & config ) const {
     OUT::massdijet_m = 0;
     OUT::massdijet_pt = 0;
 
+    TLorentzVector metlv;
+    metlv.SetPtEtaPhiM( OUT::met_pt, 0.0, OUT::met_phi, 0.0 );
+    TLorentzVector metlvOrig( metlv );
+
+    TLorentzVector metlv_JetResUp;
+    TLorentzVector metlv_JetResDown;
+    TLorentzVector metlv_JetEnUp;
+    TLorentzVector metlv_JetEnDown;
+    TLorentzVector metlv_UnclusteredEnUp;
+    TLorentzVector metlv_UnclusteredEnDown;
+    TLorentzVector metlv_MuonEnUp;
+    TLorentzVector metlv_MuonEnDown;
+    TLorentzVector metlv_ElectronEnUp;
+    TLorentzVector metlv_ElectronEnDown;
+    TLorentzVector metlv_PhotonEnUp;
+    TLorentzVector metlv_PhotonEnDown;
+    // Take MET uncertainties from jets and unclustered energy from MiniAod
+    metlv_JetResUp.SetPtEtaPhiM( OUT::met_JetResUp_pt,    0.0, 
+                                  OUT::met_JetResUp_phi,   0.0 );
+    metlv_JetResDown.SetPtEtaPhiM( OUT::met_JetResDown_pt,    0.0, 
+                                    OUT::met_JetResDown_phi,   0.0 );
+    metlv_JetEnUp.SetPtEtaPhiM( OUT::met_JetEnUp_pt,    0.0, 
+                                 OUT::met_JetEnUp_phi,   0.0 );
+    metlv_JetEnDown.SetPtEtaPhiM( OUT::met_JetEnDown_pt,    0.0, 
+                                   OUT::met_JetEnDown_phi,   0.0 );
+    metlv_UnclusteredEnUp.SetPtEtaPhiM( OUT::met_UnclusteredEnUp_pt,  0.0, 
+                                         OUT::met_UnclusteredEnUp_phi, 0.0 );
+    metlv_UnclusteredEnDown.SetPtEtaPhiM( OUT::met_UnclusteredEnDown_pt, 0.0, 
+                                    OUT::met_UnclusteredEnDown_phi,   0.0 );
+    // Recalculate MET uncertainties from leptons and photons
+    // Will use 4vecs for convenience, set mass=0 again later
+    metlv_MuonEnUp.SetPtEtaPhiM( OUT::met_pt, 0.0, OUT::met_phi, 0.0 );
+    metlv_MuonEnDown.SetPtEtaPhiM( OUT::met_pt, 0.0, OUT::met_phi, 0.0 );
+    metlv_ElectronEnUp.SetPtEtaPhiM( OUT::met_pt, 0.0, OUT::met_phi, 0.0 );
+    metlv_ElectronEnDown.SetPtEtaPhiM( OUT::met_pt, 0.0, OUT::met_phi, 0.0 );
+    metlv_PhotonEnUp.SetPtEtaPhiM( OUT::met_pt, 0.0, OUT::met_phi, 0.0 );
+    metlv_PhotonEnDown.SetPtEtaPhiM( OUT::met_pt, 0.0, OUT::met_phi, 0.0 );
+
     std::vector<TLorentzVector> leptons;
     std::vector<TLorentzVector> leptons_MuEn_up;
     std::vector<TLorentzVector> leptons_MuEn_down;
@@ -2920,7 +2970,12 @@ void RunModule::BuildEventVars( ModuleConfig & config ) const {
         leptons_MuEn_down.push_back(tlv_down);
         leptons_ElEn_up.push_back(tlv);
         leptons_ElEn_down.push_back(tlv);
+
+        metlv_MuonEnUp   = metlv_MuonEnUp   + tlv - tlv_up;
+        metlv_MuonEnDown = metlv_MuonEnDown + tlv - tlv_down;
     }
+    metlv_MuonEnUp.SetPtEtaPhiM(   metlv_MuonEnUp.Pt(),   0.0, metlv_MuonEnUp.Phi(),   0.0 );
+    metlv_MuonEnDown.SetPtEtaPhiM( metlv_MuonEnDown.Pt(), 0.0, metlv_MuonEnDown.Phi(), 0.0 );
 
     for( int idx = 0; idx < OUT::el_n; ++idx ) {
         TLorentzVector tlv;
@@ -2944,7 +2999,12 @@ void RunModule::BuildEventVars( ModuleConfig & config ) const {
         leptons_MuEn_down.push_back(tlv);
         leptons_ElEn_up.push_back(tlv_up);
         leptons_ElEn_down.push_back(tlv_down);
+
+        metlv_ElectronEnUp   = metlv_ElectronEnUp   + tlv - tlv_up;
+        metlv_ElectronEnDown = metlv_ElectronEnDown + tlv - tlv_down;
     }
+    metlv_ElectronEnUp.SetPtEtaPhiM(   metlv_ElectronEnUp.Pt(),   0.0, metlv_ElectronEnUp.Phi(),   0.0 );
+    metlv_ElectronEnDown.SetPtEtaPhiM( metlv_ElectronEnDown.Pt(), 0.0, metlv_ElectronEnDown.Phi(), 0.0 );
 
 
     for( int idx = 0; idx < OUT::ph_n; ++idx ) {
@@ -2967,48 +3027,12 @@ void RunModule::BuildEventVars( ModuleConfig & config ) const {
         photons.push_back(tlv);
         photons_PhEn_up.push_back(tlv_up);
         photons_PhEn_down.push_back(tlv_down);
+
+        metlv_PhotonEnUp   = metlv_PhotonEnUp   + tlv - tlv_up;
+        metlv_PhotonEnDown = metlv_PhotonEnDown + tlv - tlv_down;
     }
-
-    TLorentzVector metlv;
-    metlv.SetPtEtaPhiM( OUT::met_pt, 0.0, OUT::met_phi, 0.0 );
-    TLorentzVector metlvOrig( metlv );
-
-    TLorentzVector metlv_JetResUp;
-    TLorentzVector metlv_JetResDown;
-    TLorentzVector metlv_JetEnUp;
-    TLorentzVector metlv_JetEnDown;
-    TLorentzVector metlv_MuonEnUp;
-    TLorentzVector metlv_MuonEnDown;
-    TLorentzVector metlv_ElectronEnUp;
-    TLorentzVector metlv_ElectronEnDown;
-    TLorentzVector metlv_PhotonEnUp;
-    TLorentzVector metlv_PhotonEnDown;
-    TLorentzVector metlv_UnclusteredEnUp;
-    TLorentzVector metlv_UnclusteredEnDown;
-    metlv_JetResUp.SetPtEtaPhiM( OUT::met_JetResUp_pt,    0.0, 
-                                  OUT::met_JetResUp_phi,   0.0 );
-    metlv_JetResDown.SetPtEtaPhiM( OUT::met_JetResDown_pt,    0.0, 
-                                    OUT::met_JetResDown_phi,   0.0 );
-    metlv_PhotonEnUp.SetPtEtaPhiM( OUT::met_PhotonEnUp_pt,    0.0, 
-                                    OUT::met_PhotonEnUp_phi,   0.0 );
-    metlv_PhotonEnDown.SetPtEtaPhiM( OUT::met_PhotonEnDown_pt,    0.0, 
-                                      OUT::met_PhotonEnDown_phi,   0.0 );
-    metlv_JetEnUp.SetPtEtaPhiM( OUT::met_JetEnUp_pt,    0.0, 
-                                 OUT::met_JetEnUp_phi,   0.0 );
-    metlv_JetEnDown.SetPtEtaPhiM( OUT::met_JetEnDown_pt,    0.0, 
-                                   OUT::met_JetEnDown_phi,   0.0 );
-    metlv_MuonEnUp.SetPtEtaPhiM( OUT::met_MuonEnUp_pt,    0.0, 
-                                  OUT::met_MuonEnUp_phi,   0.0 );
-    metlv_MuonEnDown.SetPtEtaPhiM( OUT::met_MuonEnDown_pt,    0.0, 
-                                    OUT::met_MuonEnDown_phi,   0.0 );
-    metlv_ElectronEnUp.SetPtEtaPhiM( OUT::met_ElectronEnUp_pt,    0.0, 
-                                      OUT::met_ElectronEnUp_phi,   0.0 );
-    metlv_ElectronEnDown.SetPtEtaPhiM( OUT::met_ElectronEnDown_pt,    0.0, 
-                                        OUT::met_ElectronEnDown_phi,   0.0 );
-    metlv_UnclusteredEnUp.SetPtEtaPhiM( OUT::met_UnclusteredEnUp_pt,  0.0, 
-                                         OUT::met_UnclusteredEnUp_phi, 0.0 );
-    metlv_UnclusteredEnDown.SetPtEtaPhiM( OUT::met_UnclusteredEnDown_pt, 0.0, 
-                                    OUT::met_UnclusteredEnDown_phi,   0.0 );
+    metlv_PhotonEnUp.SetPtEtaPhiM(   metlv_PhotonEnUp.Pt(),   0.0, metlv_PhotonEnUp.Phi(),   0.0 );
+    metlv_PhotonEnDown.SetPtEtaPhiM( metlv_PhotonEnDown.Pt(), 0.0, metlv_PhotonEnDown.Phi(), 0.0 );
 
     if( leptons.size() > 0 ) {
         OUT::mt_lep_met = Utils::calc_mt( leptons[0], metlvOrig );
@@ -4659,7 +4683,10 @@ void RunModule::WeightEvent( ModuleConfig & config ) const {
       OUT::PDFWeights->clear();
       //for (int i = 1; i<10; i++){
       for ( int i : { 1, 2, 3, 4, 6, 8 } ){
-        OUT::PDFWeights->push_back(IN::EventWeights->at(i)/IN::EventWeights->at(0));
+        if (printevent) std::cout<<i<<"  "
+        <<(IN::EventWeights->at(i)/IN::EventWeights->at(0)/_pdfweight_sample_hist->GetBinContent(i+1))<<" "
+        <<IN::EventWeights->at(i)/IN::EventWeights->at(0)<<"  "<<_pdfweight_sample_hist->GetBinContent(i+1)<<std::endl;
+        OUT::PDFWeights->push_back(IN::EventWeights->at(i)/IN::EventWeights->at(0)/_pdfweight_sample_hist->GetBinContent(i+1));
       }
     }
 

@@ -22,7 +22,7 @@ ROOT.Math.MinimizerOptions.SetDefaultMaxFunctionCalls( 100000)
 #_XMIN_M = 200
 _XMIN_M = 200
 _XMAX_M = 2000
-_BIN_WIDTH_M = 20
+_BIN_WIDTH_M = 30
 _DEFAULTDATADIR = 'data/bkgfit/'
 
 if options.dataDir is None :
@@ -60,7 +60,7 @@ def main() :
     protag = "all"
 
 
-    fitfunc = ["dijet","expow","atlas"] 
+    fitfunc = ["dijet"]#,"expow","atlas"] 
     #fitfunc = ["atlas"] 
     #fitfunc = "dijet"
 
@@ -77,7 +77,7 @@ def main() :
 
                 #hist = makehist(var, binning[seltag], sampnames, sampMan, sel, weight = "NLOWeight")
                 if options.year ==2018: weight = weight.replace("prefweight","1")
-                weight = weight.replace("*jet_btagSF","") ## no jet_btagSF
+                weight = weight.replace("*jet_btagSF","") ## Yihui -- no jet_btagSF
                 hist = makehistall(var, binning[seltag],  sampMan, sel, weight)
                 #histarray[ch+seltag+var].DrawSave()
                 #hist = sampMan['__AllStack__'].hist.Clone()

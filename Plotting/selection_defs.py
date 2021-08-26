@@ -241,15 +241,19 @@ def makeselstringlist(ch="el", phpt = 80, leppt = 35, met = 40):
     ph_base = 'ph_IsEB[0]'
     #ph_pt  = 'ph_pt[0] > %i ' %phpt
     # Yihui progressively photon pt
-    ph_pt  = 'ph_pt[0] > 0.40*m_mt_lep_met_ph - 20 && ph_pt[0] < 0.50*m_mt_lep_met_ph + 40'
-    #ph_pt  = 'ph_pt[0] > 0.40*m_mt_lep_met_ph - 20 && ph_pt[0] < 0.60*m_mt_lep_met_ph + 20'
-    #ph_pt  = 'ph_pt[0] > 0.50*m_mt_lep_met_ph - 40 && ph_pt[0] < 0.50*m_mt_lep_met_ph + 40'
-    #ph_pt  = 'ph_pt[0] > 0.50*m_mt_lep_met_ph - 30 && ph_pt[0] < 0.50*m_mt_lep_met_ph + 30'
+    #ph_pt  = 'ph_pt[0] > 0 '
+    #ph_pt  = 'ph_pt[0] > 80 '
+    #ph_pt  = 'ph_pt[0] >= 0.2*mt_res'
+    #ph_pt  = 'ph_pt[0] > 0.40*mt_res - 20 && ph_pt[0] < 0.50*mt_res + 40'
+    ph_pt  = 'ph_pt[0] > 0.50*mt_res - 40 && ph_pt[0] < 0.50*mt_res + 40'
+    #ph_pt  = 'ph_pt[0] > 0.45*mt_res - 20 && ph_pt[0] < 0.55*mt_res'
+
 
     ph_passpix = '!ph_hasPixSeed[0]'
     ph_tight = 'ph_passTight[0]' # already in base selection
     sel_ph =  [ph_base, ph_tight, ph_pt, ph_passpix]
 
+    #met_str = 'met_pt > 0'
     met_str = 'met_pt > %i' %met
 
     Zveto_str = 'fabs(m_lep_ph-91)>20.0'

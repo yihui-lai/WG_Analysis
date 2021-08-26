@@ -11,6 +11,7 @@
 #include "TChain.h"
 #include "TLorentzVector.h"
 #include "include/RoccoR.h"
+#include "include/BranchDefs.h"
 
 // The RunModule inherits from RunModuleBase (an Abstract Base Class )
 // defined in the Core package so that all
@@ -102,8 +103,9 @@ class RunModule : public virtual RunModuleBase {
 
         TFile * _puweight_sample_file;
         TFile * _puweight_data_file;
-        TH1F * _puweight_sample_hist;
+        TH1D * _puweight_sample_hist;
         TH1D * _puweight_data_hist;
+        TH1D * _pdfweight_sample_hist;
         TH1D * h_EventWeight;
 
 	RoccoR rc;
@@ -398,11 +400,6 @@ namespace OUT {
     float PUWeightUP10;
     float PUWeightDN5;
     float PUWeightDN10;
-#ifndef EXISTS_prefweight
-    float prefweight;
-    float prefweightup;
-    float prefweightdown;
-#endif
 
 };
 
