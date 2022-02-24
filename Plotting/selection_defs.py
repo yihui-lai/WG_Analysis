@@ -5,15 +5,16 @@ def get_base_selection( channel, year=2016 ) :
 
     if channel == 'mu' :
         return 'mu_pt30_n==1 && mu_n==1 && el_n==0 && mu_passTight[0] '  # require 1 muon with pt > 30 and 1 muon with pt > 10 (second lepton veto) and 0 electrons with pt > 10 (second lepton veto)
-    if channel == 'mug' :
-        return 'mu_n==1 && el_n==0 && ph_n==1'
-    if channel == 'elg' :
-        return 'el_n==1 && mu_n==0 && ph_n==1'
     if channel == 'el' :
         if year == 2016:
             return 'el_pt30_n==1 && el_n==1 && mu_n==0 && el_passTight[0] && el_hasTrigMatch[0] && (HLT_Ele27_WPTight_Gsf || HLT_Photon175)  ' # require 1 electron with pt > 30 and 1 electron with pt > 10 (second lepton veto) and 0 muonswith pt > 10 (second lepton veto)
         else:
             return 'el_pt30_n==1 && el_n==1 && mu_n==0 && el_passTight[0] && el_hasTrigMatch[0] && (HLT_Ele32_WPTight_Gsf_L1DoubleEG || HLT_Photon200) '
+
+    if channel == 'mug' :
+        return 'mu_n==1 && el_n==0 && ph_n==1'
+    if channel == 'elg' :
+        return 'el_n==1 && mu_n==0 && ph_n==1'
     if channel == 'mumu' :
         return 'mu_pt30_n>=1 && mu_n==2 && mu_passTight[0] && mu_passTight[1] '  # require 1 muon with pt > 30 and 2 muons with pt > 10
     if channel == 'elel' :
@@ -213,13 +214,13 @@ def makeselstring(ch="el", phpt = 80, leppt = 35, met = 40, addition = ""):
     selstr = " && ".join(selstrlist)
     return selstr, weight
 
-def makeselstringwweight(ch="el", phpt = 80, leppt = 35, met = 40, addition = ""):
-    """ assemble selection strings """
-    selstrlist, weight = makeselstringlist(ch,phpt,leppt,met)
-    if addition:
-        selstrlist.append(addition)
-    selstr = " && ".join(selstrlist)
-    return weight+'* ( %s )'% selstr
+#def makeselstringwweight(ch="el", phpt = 80, leppt = 35, met = 40, addition = ""):
+#    """ assemble selection strings """
+#    selstrlist, weight = makeselstringlist(ch,phpt,leppt,met)
+#    if addition:
+#        selstrlist.append(addition)
+#    selstr = " && ".join(selstrlist)
+#    return weight+'* ( %s )'% selstr
 
 def makeselstringlist(ch="el", phpt = 80, leppt = 35, met = 40):
     """ assemble selection strings
@@ -242,18 +243,6 @@ def makeselstringlist(ch="el", phpt = 80, leppt = 35, met = 40):
     mu_pt  = 'mu_pt_rc[0] > %i ' %leppt
 
     ph_base = 'ph_IsEB[0]'
-    #ph_pt  = 'ph_pt[0] > %i ' %phpt
-    #ph_pt  = 'ph_pt[0] > 0.50*mt_res - 40 && ph_pt[0] < 0.50*mt_res + 40'
-    #ph_pt  = 'ph_pt[0] > 0.50*mt_res-40'
-    #ph_pt  = 'ph_pt[0] > 0.50*mt_res-30'
-    #ph_pt  = 'ph_pt[0] > 0.40*mt_res-20'
-    #ph_pt  = 'ph_pt[0] > 0.40*mt_res'
-    #ph_pt  = 'ph_pt[0] > 0.30*mt_res-20'
-    #ph_pt  = 'ph_pt[0] > 0.20*mt_res'
-    #ph_pt  = 'ph_pt[0] < 0.55*mt_res'
-    #ph_pt  = 'ph_pt[0] < 0.50*mt_res+30'
-    #ph_pt  = 'ph_pt[0] < 0.50*mt_res+40'
-    #ph_pt  = 'ph_pt[0] < 0.65*mt_res-20'
     ph_pt  = '(ph_pt[0] > 0.4*mt_res && ph_pt[0] < 0.55*mt_res) && (ph_pt[0] > %i)' %phpt
     ph_passpix = '!ph_hasPixSeed[0]'
     ph_tight = 'ph_passTight[0]' # already in base selection
@@ -285,9 +274,10 @@ def bkgfitlowbin( cuttag ):
 
 def kinedictgen( ch, addition = "" ):
     """ define here cut-sets and tag as function of mass """
-    leppt = 35
+    leppt = 30
+    if ch=='el': leppt = 35
     cutsetdict = {
-               "A": dict( phpt = 0, leppt = leppt, met = 40, addition = addition),
+               "A": dict( phpt = 80, leppt = leppt, met = 40, addition = addition),
             }
     return cutsetdict
 

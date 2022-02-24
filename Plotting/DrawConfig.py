@@ -242,14 +242,14 @@ class DrawConfig :
             if datadrawn: wiplabel.SetText(text_x+0.07, text_y, ' Work in Progress')
             else:         wiplabel.SetText(text_x+0.07, text_y, 'Simulation Work in Progress')
             wiplabel.SetTextFont(52)
-            labeltext = '36 fb^{-1} (13 TeV)'
+            labeltext = '36  fb^{-1} (13 TeV)'
             if labelStyle:
                 if labelStyle.count('2016') :
-                    labeltext = '35.9 fb^{-1} (13 TeV)'
+                    labeltext = '35.9  fb^{-1} (13 TeV)'
                 if labelStyle.count('2017') :
-                    labeltext = '41.5 fb^{-1} (13 TeV)'
+                    labeltext = '41.5  fb^{-1} (13 TeV)'
                 if labelStyle.count('2018') :
-                    labeltext = '59.7 fb^{-1} (13 TeV)'
+                    labeltext = '59.7  fb^{-1} (13 TeV)'
             rootslabel = ROOT.TLatex()
             rootslabel.SetNDC()
             rootslabel.SetText(text_dx+0.7, text_dy+0.93, labeltext  )
@@ -265,13 +265,13 @@ class DrawConfig :
             if labelStyle.count('prelim') :
                 extText = 'Preliminary'
 
-            labeltext = '19.4 fb^{-1} (8 TeV)'
+            labeltext = '19.4  fb^{-1} (8 TeV)'
             if labelStyle.count('2016') :
-                labeltext = '35.9 fb^{-1} (13 TeV)'
+                labeltext = '35.9  fb^{-1} (13 TeV)'
             if labelStyle.count('2017') :
-                labeltext = '41.5 fb^{-1} (13 TeV)'
+                labeltext = '41.5  fb^{-1} (13 TeV)'
             if labelStyle.count('2018') :
-                labeltext = '59.7 fb^{-1} (13 TeV)'
+                labeltext = '59.7  fb^{-1} (13 TeV)'
 
             rootslabel = ROOT.TLatex()
             cmslabel = ROOT.TLatex()
@@ -291,7 +291,7 @@ class DrawConfig :
             cmslabel  .SetTextSize(0.055)
 
             extlabel.SetText( 0.25, 0.93, extText )
-            #rootslabel.SetText(0.65, 0.93, '#font[132]{#sqrt{s} = 8 TeV, L = 19.4 fb^{-1} }' )
+            #rootslabel.SetText(0.65, 0.93, '#font[132]{#sqrt{s} = 8 TeV, L = 19.4  fb^{-1} }' )
             cmslabel.SetText(0.17, 0.93, 'CMS')
             rootslabel.SetText(0.73, 0.93, labeltext  )
 
@@ -694,7 +694,6 @@ class DrawConfig :
 
         hist = None
         histname = name + str(uuid.uuid4())
-
         if type( self.histpars ) is tuple :
             if self.var[0].count(':') == 1 :
                 if len(self.histpars) == 2 and type( self.histpars[0] ) is list and type(self.histpars[1]) is list :

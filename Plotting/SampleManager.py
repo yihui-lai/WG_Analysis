@@ -335,9 +335,6 @@ class Sample :
                 print "total event from histogram: %.8g total event in"\
                       "imported XS file: %.8g ratio: %g"  \
                        %(totevt, self.total_events, totevt/self.total_events)
-                ## Yihui -- not correct number
-                #if('ChargedResonance' in str(files[0]) and totevt!= 50000):
-                #     print('-----------',files[0])
 
         if readHists:
             for f in files :
@@ -3493,7 +3490,6 @@ class SampleManager(SampleFrame) :
 
             # enable branches for variables matched in the varexp and selection
             sample.enable_parsed_branches( varexp+selection )
-        print(self.curr_stack)
         if sample.IsGroupedSample() :
 
             for subsampname in sample.groupedSampleNames :

@@ -54,24 +54,29 @@ nofit:
 
 	python MakeFits.py --NoBKGUnc  --noRunCombine --usedata --paramodel
 
+limit16:
 
+	./limitplot.py data/wg/Results/result_0p01_el2016.json
+	./limitplot.py data/wg/Results/result_0p01_mu2016.json
+	./limitplot.py data/wg/Results/result_5_el2016.json
+	./limitplot.py data/wg/Results/result_5_mu2016.json
 
 limit:
 
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_0p01_all.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_5_all.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_0p01_el2016.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_0p01_mu2016.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_5_el2016.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_5_mu2016.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_0p01_el2017.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_0p01_el2018.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_0p01_mu2017.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_0p01_mu2018.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_5_el2017.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_5_el2018.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_5_mu2017.json
-	./limitplot.py data_1015_afterbias_study/higgs/Results/result_5_mu2018.json
+	./limitplot.py data/wg/Results/result_0p01_all.json
+	./limitplot.py data/wg/Results/result_5_all.json
+	./limitplot.py data/wg/Results/result_0p01_el2016.json
+	./limitplot.py data/wg/Results/result_0p01_mu2016.json
+	./limitplot.py data/wg/Results/result_5_el2016.json
+	./limitplot.py data/wg/Results/result_5_mu2016.json
+	./limitplot.py data/wg/Results/result_0p01_el2017.json
+	./limitplot.py data/wg/Results/result_0p01_el2018.json
+	./limitplot.py data/wg/Results/result_0p01_mu2017.json
+	./limitplot.py data/wg/Results/result_0p01_mu2018.json
+	./limitplot.py data/wg/Results/result_5_el2017.json
+	./limitplot.py data/wg/Results/result_5_el2018.json
+	./limitplot.py data/wg/Results/result_5_mu2017.json
+	./limitplot.py data/wg/Results/result_5_mu2018.json
 
 syspdf:	
 

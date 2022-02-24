@@ -45,19 +45,19 @@ datestrmm=datestree=datestreg=datestrmg=""
 if options.year == 2016:
     _XSFILE   = 'cross_sections/photon16.py'
     _LUMI     = 35900
-    _SAMPCONF = 'Modules/Resonance2016.py'
+    _SAMPCONF = 'Modules/Resonance2016_v2.py'
     etastr    = ""
     #etastr    = "&& !(ph_eta[0]<0 && ph_phi[0]<16*pi/18 && ph_phi[0]>13*pi/18)"
     lumiratio = 1.
     #lumiratio = 1./(1-3./72)
 elif options.year == 2017:
-    _SAMPCONF = 'Modules/Resonance2017.py'
+    _SAMPCONF = 'Modules/Resonance2017_v2.py'
     _XSFILE   = 'cross_sections/photon17.py'
     _LUMI     = 41000
     #etastr    = "&& !(ph_eta[0]>0 && ph_phi[0]>15*pi/18)"
     #lumiratio = 1./(1-3./72.)
 elif options.year == 2018:
-    _SAMPCONF = 'Modules/Resonance2018.py'
+    _SAMPCONF = 'Modules/Resonance2018_v2.py'
     _XSFILE   = 'cross_sections/photon18.py'
     _LUMI     = 59740
     #etastr    = "&& !(ph_phi[0]<5*pi/18 && ph_phi[0]>3*pi/18)"
