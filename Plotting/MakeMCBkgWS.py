@@ -38,10 +38,6 @@ def main() :
     if options.channel != "el": sampManMuG.ReadSamples( _SAMPCONF )
     if options.channel != "mu": sampManElG.ReadSamples( _SAMPCONF )
 
-    #binning_m  = ((_XMAX_M-200)/_BIN_WIDTH_M, 200, _XMAX_M)
-    #binning_m1 = ((_XMAX_M-300)/_BIN_WIDTH_M, 300, _XMAX_M)
-    #binning_m2 = ((_XMAX_M-600)/_BIN_WIDTH_M, 600, _XMAX_M)
-
     binner = lambda xmin: ((_XMAX_M-xmin)/_BIN_WIDTH_M, xmin, _XMAX_M)
 
 

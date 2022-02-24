@@ -44,7 +44,6 @@ parser.add_argument( '--BiasStudy',        action='store_true', help='Add other 
 options = parser.parse_args()
 
 _WLEPBR = (1.-0.6741)
-#_XSFILE   = 'cross_sections/photon16_smallsig.py'
 _XSFILE   = 'cross_sections/photon_expect.py'
 _LUMI16   = 36000
 _LUMI17   = 41000
@@ -137,12 +136,12 @@ def main() :
 
     bins = [
         # mu/el channel, photons in th barrel/endcap
-    #    {'channel' : 'mu', 'year': 2016},
-    #    {'channel' : 'el', 'year': 2016},
+        {'channel' : 'mu', 'year': 2016},
+        {'channel' : 'el', 'year': 2016},
         {'channel' : 'mu', 'year': 2017},
         {'channel' : 'el', 'year': 2017},
-    #    {'channel' : 'mu', 'year': 2018},
-    #    {'channel' : 'el', 'year': 2018},
+        {'channel' : 'mu', 'year': 2018},
+        {'channel' : 'el', 'year': 2018},
     ]
 
     global binid
@@ -169,10 +168,8 @@ def main() :
         options.combineDir = "/data/users/yihuilai/combine/CMSSW_11_0_0/src/"
 
 
-    #signal_masses   = [900]
-    #signal_masses   = [200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1200, 1400,
-    #                   1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3500, 4000]
-    signal_masses    = [300, 350, 400, 450, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000]
+    signal_masses    = [300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000]
+    #signal_masses    = [300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000]
     signal_widths    = ['5', '0p01']
     if options.GoF:
         signal_masses    = [600]
@@ -517,11 +514,11 @@ class MakeLimits( ) :
         self.add_systematics()
 
         # Make Signal uncertainty plots --Yihui
-        makesysplots=False
+        makesysplots=True
         if makesysplots:
             for ch in ['el','mu']:
                 for wid in ['5','0p01']:
-                    for year in ['2016','2017','2018']:
+                    for year in ['2018']:#,'2017','2018']:
                        for index in ['A','B']:
                            c=ROOT.TCanvas("c","c",1200,600)
                            c.SetFillColor(0)
@@ -536,13 +533,14 @@ class MakeLimits( ) :
                            leg.SetLineWidth(1)
                            i=0
                            labelStyle = ch+'_'+wid+'_'+year+'_'+index
-                           signal_masses    = [300, 350, 400, 450, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000]
+                           signal_masses    = [300,  400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000]
+                           #signal_masses    = [300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000]
                            if ch == 'el':
-                               sys_error = ['CMS_ph_eff','CMS_ph_scale','CMS_el_eff','CMS_el_scale','CMS_el_trig','pdf', 'qcd_scale',]
+                               sys_error = ['CMS_ph_eff','CMS_ph_scale','CMS_el_eff','CMS_el_scale','CMS_el_trig','pdf',]
                            else:
-                               sys_error = ['CMS_ph_eff','CMS_ph_scale','CMS_mu_eff','CMS_mu_scale','CMS_mu_trig','pdf', 'qcd_scale',]
+                               sys_error = ['CMS_ph_eff','CMS_ph_scale','CMS_mu_eff','CMS_mu_scale','CMS_mu_trig','pdf',]
                            if index=='B':
-                               sys_error = ['pdf', 'qcd_scale', 'CMS_jer','CMS_jec','CMS_pile','CMS_bjetsf','CMS_psv']
+                               sys_error = ['qcd_scale', 'CMS_jer','CMS_jec','CMS_pile','CMS_bjetsf','CMS_psv']
                                if year != '2018': sys_error.append('CMS_pref')
 
                            nickName = {'CMS_psv':'PSV', 'CMS_jer':'JER', 'qcd_scale':'qcd scale', 'CMS_jec':'JEC','CMS_pile':'PileUp', 'CMS_el_eff':'Electron ID', 'CMS_bjetsf':'BJet', 'CMS_ph_eff':'Photon ID', 'CMS_pref':'Prefire', 'CMS_el_trig':'Electron Trigger', 'pdf':'PDF', 'CMS_el_scale':'Electron Energy', 'CMS_ph_scale':'Photon Energy','CMS_mu_eff':'Muon ID','CMS_mu_trig':'Muon Trigger','CMS_mu_scale':'Muon Energy'}
@@ -565,7 +563,6 @@ class MakeLimits( ) :
                                y_eus[isys] = array( 'd' )
                                y_eds[isys] = array( 'd' )
                                for isigm in signal_masses:
-
                                    sigkey = "M%i_W%s_%s%s" %(isigm,wid,ch,year)
                                    if float(self.signals[sigkey]["sys"][isys][0]) > float(self.signals[sigkey]["sys"][isys][1]):
                                        syseUp = float(self.signals[sigkey]["sys"][isys][0])
@@ -577,8 +574,8 @@ class MakeLimits( ) :
                                    xes[isys].append( 0 )
                                    #print(syseUp, syseDown)
                                    ys[isys].append( 100*(abs(syseUp-1)+abs(syseDown-1))/2.0 )
-                                   y_eus[isys].append(100*abs( abs(syseUp-1) - (abs(syseUp-1)+abs(syseDown-1))/2.0))
-                                   y_eds[isys].append(100*abs(abs(syseDown-1)-(abs(syseUp-1)+abs(syseDown-1))/2.0))
+                                   y_eus[isys].append( 100*abs(abs(syseUp-1)-abs(syseDown-1))/2.0 )
+                                   y_eds[isys].append( 100*abs(abs(syseUp-1)-abs(syseDown-1))/2.0 )
                                Graphs[isys] = ROOT.TGraphAsymmErrors( n, xs[isys],ys[isys], xes[isys],xes[isys] ,y_eds[isys],y_eus[isys] )
                                Graphs[isys].SetMarkerStyle(20)
                                Graphs[isys].SetMarkerColor(graphColors[i])
@@ -664,7 +661,8 @@ class MakeLimits( ) :
                            line2.SetLineWidth(2)
                            line2.Draw()
                            c.SaveAs('sys_'+labelStyle+'.pdf')
-                           exit()
+                           c.SaveAs('sys_'+labelStyle+'.C')
+        exit()
         #---------------------------------------
         # Prepare the data cards for limits
         #---------------------------------------
@@ -1211,7 +1209,7 @@ class MakeLimits( ) :
         maxshift = 0
         minshift = 0
         if self.addShapeUnc2Mass:
-            filepath = "data/sigfit/fitted_mass%i.txt" %ibin['year']
+            filepath = "data/sigfit_fix/fitted_mass%i.txt" %ibin['year']
             with open(filepath, "r") as fo:
                 mshifts = json.load(fo)
             w="5.0" if iwid=="5" else "0.01"
@@ -1224,12 +1222,11 @@ class MakeLimits( ) :
             #    continue
             for iparname, iparval in sig['params'].iteritems():
                 if iparval[1] != 0:
-                   #Yihui --- use smooth signal model
+                   #Yihui --- use smooth signal model. Signal param in card
                    if 'cb_mass_MG' in iparname and self.addShapeUnc2Mass:
                        card_entries.append('%s param %.5f %.5f'%(iparname, iparval[0], (ROOT.TMath.Sqrt(maxshift**2+ iparval[1]**2)+ ROOT.TMath.Sqrt(minshift**2+ iparval[1]**2))/2.0))
                    else:
                        card_entries.append('%s param %.5f %.5f'%(iparname, iparval[0], iparval[1]))
-        
         card_entries.append( section_divider )
 
         if outputCard is not None :
@@ -1563,8 +1560,8 @@ class MakeLimits( ) :
         ## get the cross section and scale factor information
         scale = self.weightMap['ResonanceMass%d'%mass]['cross_section'] * lumi(ibin)
 
-        fname= '%s/sigfit/%i/ws%s_%s.root' %( self.baseDir, ibin['year'], self.signame, inpar )
-        if options.paramodel :
+        fname= '%s/sigfit_fix/%i/ws%s_%s.root' %( self.baseDir, ibin['year'], self.signame, inpar )
+        if options.paramodel:
             print("will use the parameterized model! ")
             fname= '%s/sigfit_para/%i/ws%s_%s.root' %( self.baseDir, ibin['year'], self.signame, inpar )
         wsname = "ws" + self.signame + '_' + inpar
@@ -1589,7 +1586,7 @@ class MakeLimits( ) :
 
         ## open json file for shifted mean value
         if not self.noShapeUnc:
-            filepath = "data/sigfit/fitted_mass%i.txt" %ibin['year']
+            filepath = "data/sigfit_fix/fitted_mass%i.txt" %ibin['year']
             #if options.paramodel :
             #    filepath = "data/sigfit_para/fitted_mass%i.txt" %ibin['year']
             with open(filepath, "r") as fo:
@@ -1602,6 +1599,13 @@ class MakeLimits( ) :
            print ws_entry
 
         ## Resonance mass shift
+        # manually set these to 0
+        ws_in.var(ws_entry.replace('cb_MG','cb_power1_MG')).setError(0.0)
+        ws_in.var(ws_entry.replace('cb_MG','cb_power2_MG')).setError(0.0)
+        ws_in.var(ws_entry.replace('cb_MG','cb_cut2_MG')).setError(0.0)
+        ws_in.var(ws_entry.replace('cb_MG','cb_power1_MG')).setConstant()
+        ws_in.var(ws_entry.replace('cb_MG','cb_power2_MG')).setConstant()
+        ws_in.var(ws_entry.replace('cb_MG','cb_cut2_MG')).setConstant()
         pdf = ws_in.pdf( ws_entry )
         pdf.SetName("Resonance")
 
@@ -1835,11 +1839,22 @@ class MakeLimits( ) :
                 else:
                     flagstr+=" --freezeParameters %s" %self.freezeParameter
 
-
+            # Use all dijet2 or use envelope --Yihui
             flagstr+= mtrange
-            #command+= 'combine -M AsymptoticLimits --setParameters  pdf_index_el2016=0,pdf_index_el2017=0,pdf_index_el2018=0,pdf_index_mu2016=0,pdf_index_mu2017=0,pdf_index_mu2018=0 --freezeParameters pdf_index_el2016,pdf_index_el2017,pdf_index_el2018,pdf_index_mu2016,pdf_index_mu2017,pdf_index_mu2018 -m %d %s %s >& %s'\
-            command+= 'combine -M AsymptoticLimits --setParameters  pdf_index_el2017=0,pdf_index_mu2017=0 --freezeParameters pdf_index_el2017,pdf_index_mu2017 -m %d %s %s >& %s'\
-                        %( mass, flagstr, card, log_file )
+            useenve=True
+            if useenve:
+                command+= 'combine -M AsymptoticLimits -m %d %s %s >& %s'%( mass, flagstr, card, log_file )
+            else:
+                if '2016' in log_file:
+                    command+= 'combine -M AsymptoticLimits --setParameters  pdf_index_el2016=0,pdf_index_mu2016=0 --freezeParameters pdf_index_el2016,pdf_index_mu2016 -m %d %s %s >& %s'%( mass, flagstr, card, log_file )
+                elif '2017' in log_file:
+                    command+= 'combine -M AsymptoticLimits --setParameters  pdf_index_el2017=0,pdf_index_mu2017=0 --freezeParameters pdf_index_el2017,pdf_index_mu2017 -m %d %s %s >& %s'%( mass, flagstr, card, log_file )
+                elif '2018' in log_file:
+                    command+= 'combine -M AsymptoticLimits --setParameters  pdf_index_el2018=0,pdf_index_mu2018=0 --freezeParameters pdf_index_el2018,pdf_index_mu2018 -m %d %s %s >& %s'%( mass, flagstr, card, log_file )
+                else:
+                    command+= 'combine -M AsymptoticLimits --setParameters  pdf_index_el2016=0,pdf_index_el2017=0,pdf_index_el2018=0,pdf_index_mu2016=0,pdf_index_mu2017=0,pdf_index_mu2018=0 --freezeParameters pdf_index_el2016,pdf_index_el2017,pdf_index_el2018,pdf_index_mu2016,pdf_index_mu2017,pdf_index_mu2018 -m %d %s %s >& %s'%( mass, flagstr, card, log_file )
+
+
             #do goodness of fit -- Yihui
             if options.GoF:
                 command = '\n combineTool.py -M GoodnessOfFit --algo=KS %s -n .KS -v 3 >& %s \n' %(card, 'goodnessdata'+log_file)
@@ -1976,8 +1991,8 @@ class MakeLimits( ) :
                 ch = sigpar.split('_')[2]
                 ##only run all -- Yihui
                 #if ch!='all':
-                if '2017' not in ch:
-                    continue
+                #if '2016' not in ch:
+                #    continue
                 #print sigpar, "w %s m %i ch %s" %( wid, mass, ch)
 
                 fname = '%s/Width%s/%s/Mass%i/run_combine_%s.sh' %( self.outputDir, wid, ch, mass, sigpar )

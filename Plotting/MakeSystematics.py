@@ -90,7 +90,7 @@ def makecomparisonplot( samplemanager, histograms, hist_config=None, label_confi
     for i, h in enumerate(histograms):
         formathist(h)
         if normalize: h.Scale(1./h.Integral())
-        h.SetLineColor(_COLOR[i])
+        h.SetLineColor(_COLOR[i%18])
         h.Draw("same hist")
 
     ## make hratio
@@ -413,7 +413,7 @@ for cutsetkey, sellist in selection_list.iteritems():
         #save_as = ("%s_%sg%i.pdf" %(sysname,ch,year), options.outputDir, "base")
         save_as = None
         hconf = { "xlabel": "Reco Mass","xunit": "GeV" ,"drawsignal":True, "logy":True}
-        hf = sf.SetHisto1DFast(var, sel, (90,200,2000), weight, hconf, lgconf , lconf, save_as, data_exp = True)
+        hf = sf.SetHisto1DFast(var, sel, (90,230,2300), weight, hconf, lgconf , lconf, save_as, data_exp = True)
         selection_list[cutsetkey][sysname]["hist"] = hf
 
 #########  draw histograms  #########

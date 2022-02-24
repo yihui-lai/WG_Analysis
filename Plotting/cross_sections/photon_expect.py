@@ -70,12 +70,14 @@
  ('ResonanceMass700'        , { 'n_evt' : 50000, 'cross_section' : 0.004809*10    , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
  ('ResonanceMass800'        , { 'n_evt' : 50000, 'cross_section' : 0.00296*10    , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
  ('ResonanceMass900'        , { 'n_evt' : 50000, 'cross_section' : 0.0022625*10   , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
- ('ResonanceMass1000'       , { 'n_evt' : 50000, 'cross_section' : 0.001675*10   , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
+ ('ResonanceMass1000'       , { 'n_evt' : 50000, 'cross_section' : 0.001675*10*0.630   , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
  ('ResonanceMass1200'       , { 'n_evt' : 50000, 'cross_section' : 0.000988125*10  , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
  ('ResonanceMass1400'       , { 'n_evt' : 50000, 'cross_section' : 0.000603*10   , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
  ('ResonanceMass1600'       , { 'n_evt' : 50000, 'cross_section' : 0.000397*10   , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
  ('ResonanceMass1800'       , { 'n_evt' : 50000, 'cross_section' : 0.000275*10  , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
  ('ResonanceMass2000'       , { 'n_evt' : 50000, 'cross_section' : 0.0002114*10  , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
+
+
  ('ResonanceMass2200'       , { 'n_evt' : 50000, 'cross_section' : 0.0001  , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
  ('ResonanceMass2400'       , { 'n_evt' : 50000, 'cross_section' : 0.0001 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
  ('ResonanceMass2600'       , { 'n_evt' : 50000, 'cross_section' : 0.0001 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 }),
